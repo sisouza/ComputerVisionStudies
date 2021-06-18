@@ -10,7 +10,7 @@ Baixando as dependencias do projeto
 > npm install
 
 **IMPORTANTE**
-É necessário adicionar as credencias de usuário no arquivo .env para o funcionamento correto do projeto.
+É necessário adicionar as credenciais de usuário (chaves de acesso, região) no arquivo .env para o funcionamento correto do projeto.
 
 ## Executando o Servidor
 
