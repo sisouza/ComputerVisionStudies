@@ -6,6 +6,11 @@ const multer = require("multer");
 const upload = multer();
 require("dotenv").config();
 const port = process.env.PORT;
+const region = process.env.REGION
+
+
+//multiple uploads
+const facesUpload = multer().array("facial_comp");
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -16,7 +21,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.post("/detectlabel", upload.single("image"), (req, res) => {
   let file = req.file.buffer;
   //setting aws
-  aws.config.update({ region: "us-east-1" });
+  aws.config.update({ region: region});
 
   let rekognition = new aws.Rekognition();
 
@@ -54,7 +59,7 @@ app.post("/detectlabel", upload.single("image"), (req, res) => {
 app.post("/facialAnalyze", upload.single("img_face"), (req, res) => {
   let file = req.file.buffer;
 
-  aws.config.update({ region: "us-east-1" });
+  aws.config.update({ region: region });
 
   let rekognition = new aws.Rekognition();
 
@@ -81,6 +86,44 @@ app.post("/facialAnalyze", upload.single("img_face"), (req, res) => {
         table += "<td>" + data.FaceLabels[i].AgeRange.High + "</td>";
         table += "<td>" + data.FaceLabels[i].Gender.Value + "</td>";
         table += "<td>" + data.FaceLabels[i].Emotions[0].Type + "</td>";
+        table += "</tr>";
+      }
+      table += "</table>";
+      res.send(table);
+    }
+  });
+});
+
+//Facial Comparation
+app.post("/compareFaces", facesUpload, (req, res) => {
+  let fileOne = req.files[0].buffer;
+  let fileTwo = req.files[1].buffer;
+
+  aws.config.update({ region: region });
+
+  let rekognition = new aws.Rekognition();
+
+  let params = {
+    SourceImage: {
+      Bytes: fileOne
+    },
+    TargetImage: {
+      Bytes: fileTwo
+    },
+    SimilarityThreshold: 90
+  };
+
+  rekognition.compareFaces(params, function(err, data) {
+    if (err) {
+      console.log(err, err.stack);
+    } else {
+      console.log(data);
+
+      let table = "<table border=1>";
+
+      for (var i = 0; i < data.FaceMatches.length; i++) {
+        table += "<tr>";
+        table += "<td>" + data.FaceMatches[i].Similarity + "</td>";
         table += "</tr>";
       }
       table += "</table>";
