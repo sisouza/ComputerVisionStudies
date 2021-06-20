@@ -5,16 +5,16 @@ const aws = require("aws-sdk");
 const multer = require("multer");
 const upload = multer();
 require("dotenv").config();
-const port = process.env.PORT;
-const region = process.env.REGION
-
-
-//multiple uploads
-const facesUpload = multer().array("facial_comp");
+const {PORT, REGION, BUCKET } = process.env;
 
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+
+//setup
+const rekognition = new aws.Rekognition();
+aws.config.update({ region: REGION });
 
 
 //application routes
@@ -22,8 +22,6 @@ app.post("/detectlabel", upload.single("image"), (req, res) => {
   let file = req.file.buffer;
   //setting aws
   aws.config.update({ region: region});
-
-  let rekognition = new aws.Rekognition();
 
   //setting params for upload
   let params = {
@@ -59,10 +57,6 @@ app.post("/detectlabel", upload.single("image"), (req, res) => {
 app.post("/facialAnalyze", upload.single("img_face"), (req, res) => {
   let file = req.file.buffer;
 
-  aws.config.update({ region: region });
-
-  let rekognition = new aws.Rekognition();
-
   //setting params 
   let params = {
     Image: {
@@ -94,23 +88,27 @@ app.post("/facialAnalyze", upload.single("img_face"), (req, res) => {
   });
 });
 
-//Facial Comparation
-app.post("/compareFaces", facesUpload, (req, res) => {
-  let fileOne = req.files[0].buffer;
-  let fileTwo = req.files[1].buffer;
-
-  aws.config.update({ region: region });
+//test
+app.post("/testFacial", upload.single("test"), (req, res) => {
+  
+  //file that will be send via upload 
+  let file = req.file.buffer;
+  //url from the target image (storage)
+  var compare = "profile.png";
 
   let rekognition = new aws.Rekognition();
 
   let params = {
     SourceImage: {
-      Bytes: fileOne
+      Bytes: file
     },
     TargetImage: {
-      Bytes: fileTwo
+      S3Object: { 
+         Bucket: BUCKET,
+         Name: compare
+      }
     },
-    SimilarityThreshold: 90
+    SimilarityThreshold: 80
   };
 
   rekognition.compareFaces(params, function(err, data) {
@@ -130,7 +128,9 @@ app.post("/compareFaces", facesUpload, (req, res) => {
       res.send(table);
     }
   });
-})
-const server = app.listen(port, () => {
-  console.log("application running on port " + port);
+});
+
+//server setup
+const server = app.listen(PORT, () => {
+  console.log("application running on port " + PORT);
 });
