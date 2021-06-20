@@ -21,7 +21,6 @@ aws.config.update({ region: REGION });
 app.post("/detectlabel", upload.single("image"), (req, res) => {
   let file = req.file.buffer;
   //setting aws
-  aws.config.update({ region: region});
 
   //setting params for upload
   let params = {
