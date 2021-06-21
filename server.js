@@ -5,7 +5,7 @@ const aws = require("aws-sdk");
 const multer = require("multer");
 const upload = multer();
 require("dotenv").config();
-const {PORT, REGION, BUCKET } = process.env;
+const {PORT, REGION, BUCKET_NAME} = process.env;
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -103,7 +103,7 @@ app.post("/testFacial", upload.single("test"), (req, res) => {
     },
     TargetImage: {
       S3Object: { 
-         Bucket: BUCKET,
+         Bucket: BUCKET_NAME,
          Name: compare
       }
     },
