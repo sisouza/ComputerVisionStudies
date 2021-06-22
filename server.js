@@ -1,29 +1,23 @@
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
 const aws = require("aws-sdk");
 const multer = require("multer");
 const upload = multer();
 require("dotenv").config();
-const port = process.env.PORT;
-const region = process.env.REGION
+const {PORT, REGION, BUCKET_NAME} = process.env;
 
+const rekognition = new aws.Rekognition();
+aws.config.update({ region: REGION});
 
 //multiple uploads
 const facesUpload = multer().array("facial_comp");
+const uploadImage =  upload.single("image");
 
 app.use(express.json());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
 
 //application routes
-app.post("/detectlabel", upload.single("image"), (req, res) => {
+app.post("/detectlabel", uploadImage, (req, res) => {
   let file = req.file.buffer;
-  //setting aws
-  aws.config.update({ region: region});
-
-  let rekognition = new aws.Rekognition();
 
   //setting params for upload
   let params = {
@@ -56,12 +50,8 @@ app.post("/detectlabel", upload.single("image"), (req, res) => {
 });
 
 //facial analyze test
-app.post("/facialAnalyze", upload.single("img_face"), (req, res) => {
+app.post("/facialAnalyze", uploadImage, (req, res) => {
   let file = req.file.buffer;
-
-  aws.config.update({ region: region });
-
-  let rekognition = new aws.Rekognition();
 
   //setting params 
   let params = {
@@ -99,10 +89,6 @@ app.post("/compareFaces", facesUpload, (req, res) => {
   let fileOne = req.files[0].buffer;
   let fileTwo = req.files[1].buffer;
 
-  aws.config.update({ region: region });
-
-  let rekognition = new aws.Rekognition();
-
   let params = {
     SourceImage: {
       Bytes: fileOne
@@ -134,9 +120,6 @@ app.post("/compareFaces", facesUpload, (req, res) => {
 
 //create a collection (get from url)
 app.get("/createaCollection", (req, res) => {
-  aws.config.update({ region: region});
-
-  let rekognition = new aws.Rekognition();
 
   let params = {
     CollectionId: "users"
@@ -153,9 +136,7 @@ app.get("/createaCollection", (req, res) => {
 });
 
 //add one image to a collection
-app.post("/indexImage", upload.single("add_file"), (req, res) => {
-  aws.config.update({ region: region });
-  let rekognition = new aws.Rekognition();
+app.post("/indexImage", uploadImage, (req, res) => {
 
   let file = req.file.buffer;
 
@@ -181,12 +162,8 @@ app.post("/indexImage", upload.single("add_file"), (req, res) => {
 });
 
 //search image in a collection
-app.post("/searchImage", upload.single("filesearch"), (req, res) => {
+app.post("/searchImage", uploadImage, (req, res) => {
   let file = req.file.buffer;
-
-  aws.config.update({ region: region });
-
-  let rekognition = new aws.Rekognition();
 
   let params = {
     CollectionId: "users",
@@ -217,6 +194,6 @@ app.post("/searchImage", upload.single("filesearch"), (req, res) => {
 });
 
 
-const server = app.listen(port, () => {
-  console.log("application running on port " + port);
+const server = app.listen(PORT, () => {
+  console.log("application running on port " + PORT);
 });
