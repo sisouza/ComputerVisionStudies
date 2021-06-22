@@ -92,8 +92,6 @@ app.post("/testFacial", uploadImage, (req, res) => {
   //url from the target image (storage)
   var compare = "profile.png";
 
-  let rekognition = new aws.Rekognition();
-
   let params = {
     SourceImage: {
       Bytes: file
