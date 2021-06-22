@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
 const aws = require("aws-sdk");
 const multer = require("multer");
 const upload = multer();
@@ -8,19 +7,17 @@ require("dotenv").config();
 const {PORT, REGION, BUCKET_NAME} = process.env;
 
 app.use(express.json());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
 
 //setup
 const rekognition = new aws.Rekognition();
 aws.config.update({ region: REGION });
 
+const uploadImage = upload.single("image")
+
 
 //application routes
-app.post("/detectlabel", upload.single("image"), (req, res) => {
+app.post("/detectlabel", uploadImage, (req, res) => {
   let file = req.file.buffer;
-  //setting aws
 
   //setting params for upload
   let params = {
@@ -53,7 +50,7 @@ app.post("/detectlabel", upload.single("image"), (req, res) => {
 });
 
 //facial analyze test
-app.post("/facialAnalyze", upload.single("img_face"), (req, res) => {
+app.post("/facialAnalyze", uploadImage, (req, res) => {
   let file = req.file.buffer;
 
   //setting params 
@@ -88,7 +85,7 @@ app.post("/facialAnalyze", upload.single("img_face"), (req, res) => {
 });
 
 //test
-app.post("/testFacial", upload.single("test"), (req, res) => {
+app.post("/testFacial", uploadImage, (req, res) => {
   
   //file that will be send via upload 
   let file = req.file.buffer;
