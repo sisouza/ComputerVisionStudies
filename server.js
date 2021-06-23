@@ -4,18 +4,23 @@ const aws = require("aws-sdk");
 const multer = require("multer");
 const upload = multer();
 require("dotenv").config();
-const {PORT, AWS_REGION , BUCKET_NAME} = process.env;
-
-app.use(express.json());
-
+const { PORT, AWS_REGION, BUCKET_NAME } = process.env;
 //setup
 const rekognition = new aws.Rekognition();
 aws.config.update({ region: AWS_REGION  });
 
-const uploadImage = upload.single("image")
+//upload setup
+const uploadImage = upload.single("image");
 
+app.use(express.json());
+app.use(express.static("public"));
 
 //application routes
+
+app.get("/", (req, res) => {
+  response.sendFile(__dirname + "/views/index.html");
+});
+
 app.post("/detectlabel", uploadImage, (req, res) => {
   let file = req.file.buffer;
 
