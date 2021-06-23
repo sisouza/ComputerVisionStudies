@@ -4,13 +4,13 @@ const aws = require("aws-sdk");
 const multer = require("multer");
 const upload = multer();
 require("dotenv").config();
-const {PORT, REGION, BUCKET_NAME} = process.env;
+const {PORT, AWS_REGION , BUCKET_NAME} = process.env;
 
 app.use(express.json());
 
 //setup
 const rekognition = new aws.Rekognition();
-aws.config.update({ region: REGION });
+aws.config.update({ region: AWS_REGION  });
 
 const uploadImage = upload.single("image")
 
@@ -87,9 +87,9 @@ app.post("/facialAnalyze", uploadImage, (req, res) => {
 //test
 app.post("/testFacial", uploadImage, (req, res) => {
   
-  //file that will be send via upload 
+  //file that will be send via upload  on webcam
   let file = req.file.buffer;
-  //url from the target image (storage)
+  //url from the target image (storage) profile pic
   var compare = "profile.png";
 
   let params = {
