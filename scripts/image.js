@@ -1,14 +1,13 @@
-function getCamera(videoStream) {
+var video = document.querySelector('#video');
+
+function getCamera() {
     
-    const videoStream = await navigator.mediaDevices.getUserMedia({ video: true })
+    const videoStream = navigator.mediaDevices.getUserMedia({ video: true })
     
     if (!"mediaDevices" in navigator || !"getUserMedia" in navigator.mediaDevices) {
     alert("Camera API is not available in your browser");
     return;
     }
-    
-   
-    var video = document.querySelector('#video');
         video.srcObject = videoStream;
         video.play();
     
@@ -29,6 +28,7 @@ function getCamera(videoStream) {
         })
     }
 
+    getCamera()
 
 
 
