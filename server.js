@@ -7,7 +7,7 @@ require("dotenv").config();
 const { PORT, AWS_REGION, BUCKET_NAME } = process.env;
 //setup
 const rekognition = new aws.Rekognition();
-aws.config.update({ region: AWS_REGION  });
+aws.config.update({ region: AWS_REGION });
 
 //upload setup
 const uploadImage = upload.single("image");
@@ -18,8 +18,13 @@ app.use(express.static("public"));
 //application routes
 
 app.get("/", (req, res) => {
-  response.sendFile(__dirname + "/views/index.html");
+  res.sendFile(__dirname + "/views/index.html");
 });
+
+//camera
+app.post("/getImage", (req, res) => {
+
+})
 
 app.post("/detectlabel", uploadImage, (req, res) => {
   let file = req.file.buffer;
@@ -34,7 +39,7 @@ app.post("/detectlabel", uploadImage, (req, res) => {
   };
 
   //get the images
-  rekognition.detectLabels(params, function(err, data) {
+  rekognition.detectLabels(params, function (err, data) {
     if (err) {
       console.log(err, err.stack);
     } else {
@@ -66,12 +71,12 @@ app.post("/facialAnalyze", uploadImage, (req, res) => {
     Attributes: ["ALL"]
   };
 
-  rekognition.detectFaces(params, function(err, data) {
+  rekognition.detectFaces(params, function (err, data) {
     if (err) {
       console.log(err, err.stack);
     } else {
       console.log(data);
-      
+
       //printing results
       let table = "<table border=1>";
 
@@ -91,26 +96,28 @@ app.post("/facialAnalyze", uploadImage, (req, res) => {
 
 //test
 app.post("/testFacial", uploadImage, (req, res) => {
-  
+
   //file that will be send via upload  on webcam
-  let file = req.file.buffer;
+  //let file = req.file.buffer;
   //url from the target image (storage) profile pic
   var compare = "profile.png";
+
+  var file = img;
 
   let params = {
     SourceImage: {
       Bytes: file
     },
     TargetImage: {
-      S3Object: { 
-         Bucket: BUCKET_NAME,
-         Name: compare
+      S3Object: {
+        Bucket: BUCKET_NAME,
+        Name: compare
       }
     },
     SimilarityThreshold: 80
   };
 
-  rekognition.compareFaces(params, function(err, data) {
+  rekognition.compareFaces(params, function (err, data) {
     if (err) {
       console.log(err, err.stack);
     } else {
