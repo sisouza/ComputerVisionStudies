@@ -1,21 +1,21 @@
-var video = document.querySelector('#video');
-
 function getCamera() {
-    
-    const videoStream = navigator.mediaDevices.getUserMedia({ video: true })
-    
-    if (!"mediaDevices" in navigator || !"getUserMedia" in navigator.mediaDevices) {
-    alert("Camera API is not available in your browser");
-    return;
-    }
+    try {
+        const videoStream = navigator.mediaDevices.getUserMedia({ video: true })
+        var video = document.querySelector('#video');
         video.srcObject = videoStream;
         video.play();
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+    getCamera()
     
     var screenshot = document.querySelector('#capture');
         screenshot.addEventListener('click', function () {
- 
+            
+    //drawing image on screen        
     var canvas = document.querySelector("#canvas");
-
         canvas.height = video.videoHeight;
         canvas.width = video.videoWidth;
     var context = canvas.getContext('2d');
@@ -26,9 +26,9 @@ function getCamera() {
         screenshotsContainer.prepend(img)
 
         })
-    }
+    
 
-    getCamera()
+    
 
 
 
