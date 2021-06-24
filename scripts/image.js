@@ -20,7 +20,7 @@ function getCamera() {
         canvas.width = video.videoWidth;
     var context = canvas.getContext('2d');
         context.drawImage(video, 0, 0)
-
+    //converting to image        
         const img = document.createElement('img')
         img.src = canvas.toDataURL('image/png')
         screenshotsContainer.prepend(img)
