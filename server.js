@@ -136,6 +136,41 @@ app.post("/testFacial", uploadImage, (req, res) => {
   });
 });
 
+//search image came from webcam and compare to faces storaged in collection
+app.post("/searchImage", uploadImage, (req, res) => {
+  let file = req.file.buffer;
+
+  let params = {
+    CollectionId: "usersTest",
+    Image: {
+      Bytes: file
+    },
+    FaceMatchThreshold: 90,
+    MaxFaces: 10
+  };
+
+
+  rekognition.searchFacesByImage(params, function(err, data) {
+    if (err) {
+      console.log(err, err.stack);
+    } else {
+      console.log(data);
+
+      let table = "<table border=1>";
+
+      for (var i = 0; i < data.FaceMatches.length; i++) {
+        table += "<tr>";
+        table += "<td>" + data.FaceMatches[i].Similarity + "</td>";
+        table += "<td>" + data.FaceMatches[i].Face.ExternalImageId + "</td>";
+        table += "</tr>";
+      }
+      table += "</table>";
+      res.send(table);
+    }
+  });
+});
+
+
 //server setup
 const server = app.listen(PORT, () => {
   console.log("application running on port " + PORT);
