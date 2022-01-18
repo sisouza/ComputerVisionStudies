@@ -1,17 +1,6 @@
 # ComputerVisionStudies
 
-NodeJS API (básica) para estudos de Computer Vision
-**Ainda em desenvolvimento**
+Repository for Computer Vision Studies Pratice, Simple API in NodeJS for Computer Vision Studies using AWS Rekoginition and AWS S3, covering topics as image processing, image analyze, file and data upload, integration with cloud computer services.
+Built with NodeJS, JavaScript, Express and Multer Library for File Upload.
 
-## Setup
-
-Baixando as dependencias do projeto
-
-> npm install
-
-**IMPORTANTE**
-É necessário adicionar as credenciais de usuário (chaves de acesso, região) no arquivo .env para o funcionamento correto do projeto.
-
-## Executando o Servidor
-
-> npm run dev
+**In Refactoring and Reformulation Phase**
