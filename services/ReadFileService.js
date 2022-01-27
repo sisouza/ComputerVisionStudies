@@ -1,5 +1,5 @@
 const fs = require("fs");
-const RekognitionService = require("../services/RekoService");
+const RekognitionService = require("../services/RekognitionService");
 
 class ReadFileService{ 
  read() {
@@ -8,7 +8,7 @@ class ReadFileService{
         
         var file = data;
 
-        const analyzeFace = rekognitionService.analyze(file);
+        const analyzeText = rekognitionService.detectText(file);
        
         })
     }
